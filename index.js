@@ -107,7 +107,7 @@ const main = () => {
         companyNamePart.remove()
     } else {
 
-        companyNamePart.innerHTML = companyName
+        companyNamePart.innerHTML = `${companyName} (${invoiceNumber})`;
     }
         const phoneNumberPart = document.querySelector("#phoneNumber");
     if (!phoneNumber) {
