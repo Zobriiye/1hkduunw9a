@@ -17,7 +17,7 @@ const main = () => {
         unitpriceusd,
         customer,
         location,
-        date, companyName,
+        date, companyName,phoneNumber,
         totalLbp, target,
         totalusd, pagewidth, savePdf, splitSubTotal, potsRemainingLarge, transId,
         potsRemainingMedium, amountPaid, amountPaidLbp, amountLeft, enablePots, enablePaidLeft
@@ -108,6 +108,13 @@ const main = () => {
     } else {
 
         companyNamePart.innerHTML = companyName
+    }
+        const phoneNumberPart = document.querySelector("#phoneNumber");
+    if (!phoneNumber) {
+        phoneNumberPart.remove()
+    } else {
+
+        phoneNumberPart.innerHTML = phoneNumber
     }
     customerPart.innerHTML = customer + ", " + location;
     // const locationPart = document.querySelector("#location");
