@@ -72,7 +72,6 @@ const main = () => {
     const potsSection = document.querySelector("#potsSection")
     const paidLeftSection = document.querySelector("#paidLeftSection")
     const invoiceNumber = document.querySelector("#invoiceNumber")
-    invoiceNumber.innerHTML = "INV#" + transId
     console.log(totalusd)
     potsRemainingLargePart.innerHTML = (potsRemainingLarge ? potsRemainingLarge : 0) + ' L'
     potsRemainingMediumPart.innerHTML = (potsRemainingMedium ? potsRemainingMedium : 0) + ' M'
