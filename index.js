@@ -17,7 +17,7 @@ const main = () => {
         unitpriceusd,
         customer,
         location,
-        date, companyName, phoneNumber,
+        date, companyName,
         totalLbp, target,
         totalusd, pagewidth, savePdf, splitSubTotal, potsRemainingLarge, transId,
         potsRemainingMedium, amountPaid, amountPaidLbp, amountLeft, enablePots, enablePaidLeft
