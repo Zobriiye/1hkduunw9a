@@ -107,7 +107,7 @@ const main = () => {
         companyNamePart.remove()
     } else {
 
-        companyNamePart.innerHTML = companyName + transId;
+        companyNamePart.innerHTML = companyName + " (INV# " + transId +")";
     }
         const phoneNumberPart = document.querySelector("#phoneNumber");
     if (!phoneNumber) {
