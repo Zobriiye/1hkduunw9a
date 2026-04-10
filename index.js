@@ -109,13 +109,6 @@ const main = () => {
 
         companyNamePart.innerHTML = companyName
     }
-    const phoneNumberPart = document.querySelector("#phoneNumber");
-    if (!phoneNumber) {
-        phoneNumberPart.remove()
-    } else {
-
-        phoneNumberPart.innerHTML = phoneNumber
-    }
     customerPart.innerHTML = customer + ", " + location;
     // const locationPart = document.querySelector("#location");
     // locationPart.innerHTML = location;
