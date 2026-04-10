@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+        integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <div class="ticket" id="ticket">
+        <p class="centered" id="companyName"></p>
+        <p class="centered" id="date"></p>
+        <p class="centered" id="customer"></p>
+        <p class="centered" id="invoiceNumber"></p>
+
+        <!-- <p class="centered" id="location"></p> -->
+
+        <table>
+            <thead>
+                <tr>
+                    <th class="quantity">Q.</th>
+                    <th class="description">Description</th>
+                    <th id="lbpColumn" class="price">LL</th>
+                    <th id="usdColumn" class="price">$</th>
+                </tr>
+            </thead>
+            <tbody id="tableBod">
+
+            </tbody>
+        </table>
+
+        <br />
+        <br />
+        <div id="potsSection" class="centered">
+            <table>
+                <tbody>
+                    <tr>
+                        <td style="max-width: 50%;" class="price">Pots Remaining</td>
+                        <td style="max-width: 25%;" class="description" id="potsRemainingLarge"></td>
+                        <td style="max-width: 25%;" class="description" id="potsRemainingMedium"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="centered">
+            <table>
+                <tbody>
+
+                    <tr id="lbpTotalRow">
+                        <td class="price">Total LL</td>
+                        <td class="description" id="totalpricelbp">
+                        </td>
+                    </tr>
+                    <tr id="usdTotalRow">
+                        <td class="price">Total $</td>
+                        <td class="description" id="totalpriceusd"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="paidLeftSection" class="centered">
+            <table class="centered">
+                <tbody>
+
+                    <tr>
+                        <td class="price">Amount Paid</td>
+                        <td class="description" id="amountPaid"></td>
+                    </tr>
+
+                    <tr>
+                        <td></td>
+                        <td class="description" id="amountPaidLbp">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="price">Amount Left</td>
+                        <td class="description" id="amountLeft"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class=" centered">
+            Thank you.
+        </p>
+        <p id="phoneNumber" class="centered"></p>
+        <p class="centered">--------</p>
+
+    </div>
+    <script>
+        const main = () => {
+            window.jsPDF = window.jspdf.jsPDF
+            const parameters = new URLSearchParams(window.location.search);
+            let params = {};
+            const cleanUpData = (key) => {
+                return key.split(",").map((ind) => ind.trim());
+            };
+            for (var value of parameters.keys()) {
+                params[value] = parameters.get(value);
+            }
+            console.log(params);
+            const {
+                products,
+                quantity,
+                unitpricelbp,
+                unitpriceusd,
+                customer,
+                location,
+                date, companyName,
+                totalLbp, target,
+                totalusd, pagewidth, savePdf, splitSubTotal, potsRemainingLarge, transId,
+                potsRemainingMedium, amountPaid, amountPaidLbp, amountLeft, enablePots, enablePaidLeft, phoneNumber
+            } = params;
+
+            const prodArr = [];
+            cleanUpData(products).forEach((name) => prodArr.push({ name }));
+            const quantities = cleanUpData(quantity)
+            quantities.forEach(
+                (quantity, i) => (prodArr[i].quantity = quantity));
+            cleanUpData(unitpricelbp).forEach(
+                (unitpricelbp, i) => {
+                    if (!splitSubTotal) {
+                        prodArr[i].unitpricelbp = unitpricelbp
+                    } else {
+                        if (parseInt(unitpricelbp) != 0) {
+
+                            prodArr[i].unitpricelbp = parseInt(unitpricelbp) / parseInt(quantities[i])
+                        } else {
+
+                            prodArr[i].unitpricelbp = 0
+                        }
+                    }
+                }
+            );
+            cleanUpData(unitpriceusd).forEach(
+                (unitpriceusd, i) => {
+                    if (!splitSubTotal) {
+                        prodArr[i].unitpriceusd = unitpriceusd
+                    } else {
+                        if (parseFloat(unitpriceusd) != 0) {
+
+                            prodArr[i].unitpriceusd = parseFloat(unitpriceusd) / parseInt(quantities[i])
+                        } else {
+                            prodArr[i].unitpriceusd = 0
+                        }
+                    }
+                }
+            );
+            const phoneNumberPart = document.querySelector("#phoneNumber")
+            const lbpColumn = document.querySelector("#lbpColumn")
+            const usdColumn = document.querySelector("#usdColumn")
+            const lbpTotalRow = document.querySelector("#lbpTotalRow")
+            const usdTotalRow = document.querySelector("#usdTotalRow")
+            const customerPart = document.querySelector("#customer");
+            const potsRemainingLargePart = document.querySelector("#potsRemainingLarge");
+            const potsRemainingMediumPart = document.querySelector("#potsRemainingMedium");
+            const totalpricelbpPart = document.querySelector("#totalpricelbp");
+            const totalpriceusdPart = document.querySelector("#totalpriceusd");
+            const amountPaidPart = document.querySelector("#amountPaid");
+            const amountPaidLbpPart = document.querySelector("#amountPaidLbp");
+            const amountLeftPart = document.querySelector("#amountLeft");
+            const potsSection = document.querySelector("#potsSection")
+            const paidLeftSection = document.querySelector("#paidLeftSection")
+            const invoiceNumber = document.querySelector("#invoiceNumber")
+            invoiceNumber.innerHTML = "INV#" + transId
+            console.log(totalusd)
+            phoneNumberPart.innerHTML = phoneNumber;
+            potsRemainingLargePart.innerHTML = (potsRemainingLarge ? potsRemainingLarge : 0) + ' L'
+            potsRemainingMediumPart.innerHTML = (potsRemainingMedium ? potsRemainingMedium : 0) + ' M'
+            amountPaidPart.innerHTML = (amountPaid ? amountPaid : 0)
+            amountPaidLbpPart.innerHTML = (amountPaidLbp ? amountPaidLbp : 0)
+            amountLeftPart.innerHTML = (amountLeft ? amountLeft : 0)
+            console.log(enablePots)
+            if (enablePots === undefined || enablePots === "") {
+                potsSection.remove()
+            }
+            if (enablePaidLeft === undefined || enablePaidLeft === "") {
+                paidLeftSection.remove()
+            }
+            switch (target) {
+                case "LBP":
+                    usdColumn.remove()
+                    usdTotalRow.remove()
+                    totalpricelbpPart.innerHTML = totalLbp;
+                    break;
+                case "USD":
+                    lbpColumn.remove()
+                    lbpTotalRow.remove()
+                    totalpriceusdPart.innerHTML = totalusd;
+                    break;
+                default:
+                    totalpriceusdPart.innerHTML = totalusd;
+                    totalpricelbpPart.innerHTML = totalLbp;
+                    break;
+            }
+            const companyNamePart = document.querySelector("#companyName");
+            if (!companyName) {
+                companyNamePart.remove()
+            } else {
+
+                companyNamePart.innerHTML = companyName
+            }
+            customerPart.innerHTML = customer + ", " + location;
+            // const locationPart = document.querySelector("#location");
+            // locationPart.innerHTML = location;
+            const datePart = document.querySelector("#date");
+            datePart.innerHTML = date;
+            const tableBody = document.querySelector("#tableBod");
+
+            prodArr.forEach((product) => {
+                tableBody.innerHTML += `
+        <tr>
+        <td class="quantity">${product.quantity}</td>
+        <td class="description">${product.name}</td>
+        ${!target || target === "LBP" ? `<td class="price">${product.unitpricelbp}</td>` : ""}
+        ${!target || target === "USD" ? `<td class="price">${product.unitpriceusd}</td>` : ""}
+        </tr>`;
+            });
+
+
+            const toPrint = document.querySelector("#toPrint");
+
+            const ticket = document.querySelector("#ticket")
+            ticket.style.maxWidth = pagewidth;
+            ticket.style.width = pagewidth;
+            var doc = new jsPDF(ticket.clientHeight < ticket.clientWidth ? "l" : "p", "px", [ticket.clientHeight, ticket.clientWidth]);
+            doc.html(ticket, {
+                callback: function (doc) {
+                    const base64Full = doc.output('datauri')
+                    if (savePdf) doc.save()
+                    document.location.href =
+                        "rawbt:data:application/pdf;base64," + base64Full.split("base64,")[1];
+                }
+            });
+
+        };
+        main();
+
+    </script>
+
+</body>
+
+</html>
