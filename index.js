@@ -63,7 +63,7 @@ const main = () => {
     const invNum = $("invoiceNumber");
     if (invNum) {
         if (cleanedTransId) {
-            invNum.textContent = `INV# ${cleanedTransId}`;
+            invNum.textContent = `Invoice #: ${cleanedTransId}`;
         } else {
             invNum.remove();
         }
