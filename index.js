@@ -12,24 +12,23 @@ const main = () => {
         amountPaid, amountPaidLbp, amountLeft, enablePots, enablePaidLeft
     } = params;
 
-    // Function to check if text contains Arabic characters
-    const containsArabic = (text) => {
-        if (!text) return false;
-        const arabicPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
-        return arabicPattern.test(text);
-    };
-
-    // Function to remove Arabic characters from a string
+    // Function to remove Arabic and any non-Latin characters
     const removeArabic = (text) => {
         if (!text) return '';
-        return text.replace(/[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/g, '').trim();
-    };
-
-    // Function to clean mixed text - keeps Latin chars and numbers
-    const cleanText = (text) => {
-        if (!text) return '';
-        // If text contains Arabic, remove it but keep spaces, numbers, and Latin chars
-        return text.replace(/[^\x00-\x7F\s]/g, '').replace(/\s+/g, ' ').trim();
+        // Remove Arabic characters and any other non-Latin-1 characters
+        // Keep: ASCII, Latin-1 Supplement (00-FF), numbers, common punctuation
+        let cleaned = '';
+        for (let i = 0; i < text.length; i++) {
+            const char = text.charAt(i);
+            const code = text.charCodeAt(i);
+            // Keep characters in range 32-255 (Latin-1) plus common symbols
+            if ((code >= 32 && code <= 255) || code === 8364 || code === 8230) {
+                cleaned += char;
+            } else if (char === ' ' || char === '-' || char === '.' || char === ',' || char === '·') {
+                cleaned += char;
+            }
+        }
+        return cleaned.replace(/\s+/g, ' ').trim();
     };
 
     const quantities = split("quantity");
@@ -38,7 +37,7 @@ const main = () => {
         const lbpRaw = split("unitpricelbp")[i];
         const usdRaw = split("unitpriceusd")[i];
         return {
-            name: cleanText(name), // Clean product names
+            name: removeArabic(name),
             quantity: quantities[i],
             unitpricelbp: splitSubTotal && parseInt(lbpRaw) ? (parseInt(lbpRaw) / parseInt(quantities[i])) : lbpRaw,
             unitpriceusd: splitSubTotal && parseFloat(usdRaw) ? (parseFloat(usdRaw) / parseInt(quantities[i])) : usdRaw,
@@ -47,11 +46,17 @@ const main = () => {
 
     const $ = (id) => document.getElementById(id);
 
+    // Clean all text before inserting into DOM
+    const cleanedCompanyName = removeArabic(companyName);
+    const cleanedCustomer = removeArabic(customer);
+    const cleanedLocation = removeArabic(location);
+    const cleanedPhoneNumber = removeArabic(phoneNumber);
+
     // Company
     const cn = $("companyName");
     if (cn) {
-        if (companyName) {
-            cn.innerHTML = cleanText(companyName);
+        if (cleanedCompanyName) {
+            cn.innerHTML = cleanedCompanyName;
         } else {
             cn.remove();
         }
@@ -70,8 +75,6 @@ const main = () => {
     // Customer
     const cu = $("customer");
     if (cu) {
-        const cleanedCustomer = cleanText(customer);
-        const cleanedLocation = cleanText(location);
         cu.innerHTML = [cleanedCustomer, cleanedLocation].filter(Boolean).join(" · ");
     }
 
@@ -82,8 +85,8 @@ const main = () => {
     // Phone
     const ph = $("phoneNumber");
     if (ph) { 
-        if (phoneNumber) {
-            ph.innerHTML = cleanText(phoneNumber);
+        if (cleanedPhoneNumber) {
+            ph.innerHTML = cleanedPhoneNumber;
         } else {
             ph.remove();
         }
