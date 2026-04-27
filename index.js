@@ -15,9 +15,7 @@ const main = () => {
     // Fix encoding issues and remove non-Latin characters
     const fixEncoding = (text) => {
         if (!text) return '';
-        // Decode any URL-encoded characters
         let decoded = decodeURIComponent(text);
-        // Remove all non-ASCII characters (keep only basic Latin)
         return decoded.replace(/[^\x00-\x7F]/g, '').trim();
     };
 
@@ -63,7 +61,7 @@ const main = () => {
     const invNum = $("invoiceNumber");
     if (invNum) {
         if (cleanedTransId) {
-            invNum.textContent = `Invoice #: ${cleanedTransId}`;
+            invNum.textContent = `INV# ${cleanedTransId}`;
         } else {
             invNum.remove();
         }
