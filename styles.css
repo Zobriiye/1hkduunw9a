@@ -85,11 +85,9 @@ tbody tr:last-child td {
     border-bottom: none;
 }
 
-/* Totals section with indentation */
+/* Totals section with indentation but full-width lines */
 .totals-table {
     margin-top: 1px;
-    margin-left: 8mm;
-    width: calc(100% - 8mm);
 }
 
 .totals-table td {
@@ -100,14 +98,15 @@ tbody tr:last-child td {
 
 .totals-table td:first-child {
     font-weight: 700;
-    width: 55%;
-    text-align: left;
+    width: 65%;
+    text-align: right;
+    padding-right: 4mm;
 }
 
 .totals-table td:last-child {
     text-align: right;
     font-weight: 700;
-    width: 45%;
+    width: 35%;
 }
 
 #potsSection td {
@@ -122,28 +121,18 @@ tbody tr:last-child td {
     margin: 1px 0;
 }
 
-/* Paid/Left section with indentation */
-#paidLeftSection {
-    margin-left: 8mm;
-}
-
-#paidLeftSection .totals-table {
-    margin-left: 0;
-    width: 100%;
-}
-
-#paidLeftSection .totals-table td {
-    font-weight: 400;
-    font-size: 8px;
-    line-height: 1.3;
-}
-
+/* Paid section with indentation but full-width lines */
 #paidLeftSection .totals-table td:first-child {
     font-weight: 400;
+    width: 65%;
+    text-align: right;
+    padding-right: 4mm;
 }
 
 #paidLeftSection .totals-table td:last-child {
     font-weight: 700;
+    width: 35%;
+    text-align: right;
 }
 
 #paidLeftSection hr {
