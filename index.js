@@ -12,13 +12,33 @@ const main = () => {
         amountPaid, amountPaidLbp, amountLeft, enablePots, enablePaidLeft
     } = params;
 
+    // Function to check if text contains Arabic characters
+    const containsArabic = (text) => {
+        if (!text) return false;
+        const arabicPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+        return arabicPattern.test(text);
+    };
+
+    // Function to remove Arabic characters from a string
+    const removeArabic = (text) => {
+        if (!text) return '';
+        return text.replace(/[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/g, '').trim();
+    };
+
+    // Function to clean mixed text - keeps Latin chars and numbers
+    const cleanText = (text) => {
+        if (!text) return '';
+        // If text contains Arabic, remove it but keep spaces, numbers, and Latin chars
+        return text.replace(/[^\x00-\x7F\s]/g, '').replace(/\s+/g, ' ').trim();
+    };
+
     const quantities = split("quantity");
 
     const prodArr = split("products").map((name, i) => {
         const lbpRaw = split("unitpricelbp")[i];
         const usdRaw = split("unitpriceusd")[i];
         return {
-            name,
+            name: cleanText(name), // Clean product names
             quantity: quantities[i],
             unitpricelbp: splitSubTotal && parseInt(lbpRaw) ? (parseInt(lbpRaw) / parseInt(quantities[i])) : lbpRaw,
             unitpriceusd: splitSubTotal && parseFloat(usdRaw) ? (parseFloat(usdRaw) / parseInt(quantities[i])) : usdRaw,
@@ -31,13 +51,13 @@ const main = () => {
     const cn = $("companyName");
     if (cn) {
         if (companyName) {
-            cn.innerHTML = companyName;
+            cn.innerHTML = cleanText(companyName);
         } else {
             cn.remove();
         }
     }
 
-    // Invoice Number - now under company name
+    // Invoice Number
     const invNum = $("invoiceNumber");
     if (invNum) {
         if (transId) {
@@ -49,15 +69,25 @@ const main = () => {
 
     // Customer
     const cu = $("customer");
-    if (cu) cu.innerHTML = [customer, location].filter(Boolean).join(" · ");
+    if (cu) {
+        const cleanedCustomer = cleanText(customer);
+        const cleanedLocation = cleanText(location);
+        cu.innerHTML = [cleanedCustomer, cleanedLocation].filter(Boolean).join(" · ");
+    }
 
-    // Date (hidden but safe)
+    // Date
     const dp = $("date");
     if (dp) dp.innerHTML = date || "";
 
     // Phone
     const ph = $("phoneNumber");
-    if (ph) { phoneNumber ? ph.innerHTML = phoneNumber : ph.remove(); }
+    if (ph) { 
+        if (phoneNumber) {
+            ph.innerHTML = cleanText(phoneNumber);
+        } else {
+            ph.remove();
+        }
+    }
 
     // Pots
     const ps = $("potsSection");
