@@ -1,99 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Invoice</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
-        integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
     <div class="ticket" id="ticket">
-        <p class="centered" id="companyName"></p>
-        <p class="centered" id="date" style="display:none"></p>
-        <p class="centered" id="customer"></p>
 
-        <!-- <p class="centered" id="location"></p> -->
+        <p id="companyName"></p>
+        <p id="date" style="display:none"></p>
+        <p id="customer"></p>
+
+        <hr class="divider">
 
         <table>
             <thead>
                 <tr>
-                    <th class="quantity">Q.</th>
-                    <th class="description">Description</th>
-                    <th id="lbpColumn" class="price">LL</th>
+                    <th class="quantity">Qty</th>
+                    <th class="description">Item</th>
+                    <th id="lbpColumn" class="price">ل.ل</th>
                     <th id="usdColumn" class="price">$</th>
                 </tr>
             </thead>
-            <tbody id="tableBod">
+            <tbody id="tableBod"></tbody>
+        </table>
 
+        <hr class="divider">
+
+        <div id="potsSection">
+            <table>
+                <tbody>
+                    <tr>
+                        <td style="text-align:right; width:50%; font-weight:600; font-size:10px;">Pots Remaining</td>
+                        <td style="text-align:center; width:25%; font-size:10px;" id="potsRemainingLarge"></td>
+                        <td style="text-align:center; width:25%; font-size:10px;" id="potsRemainingMedium"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <hr class="divider">
+        </div>
+
+        <table class="totals-table">
+            <tbody>
+                <tr id="lbpTotalRow">
+                    <td>Total</td>
+                    <td id="totalpricelbp"></td>
+                </tr>
+                <tr id="usdTotalRow">
+                    <td>Total</td>
+                    <td id="totalpriceusd"></td>
+                </tr>
             </tbody>
         </table>
 
-        <br />
-        <br />
-        <div id="potsSection" class="centered">
-            <table>
+        <div id="paidLeftSection">
+            <hr class="divider">
+            <table class="totals-table">
                 <tbody>
                     <tr>
-                        <td style="max-width: 50%;" class="price">Pots Remaining</td>
-                        <td style="max-width: 25%;" class="description" id="potsRemainingLarge"></td>
-                        <td style="max-width: 25%;" class="description" id="potsRemainingMedium"></td>
+                        <td>Amount Paid</td>
+                        <td id="amountPaid"></td>
                     </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="centered">
-            <table>
-                <tbody>
-
-                    <tr id="lbpTotalRow">
-                        <td class="price">Total LL</td>
-                        <td class="description" id="totalpricelbp">
-                        </td>
-                    </tr>
-                    <tr id="usdTotalRow">
-                        <td class="price">Total $</td>
-                        <td class="description" id="totalpriceusd"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div id="paidLeftSection" class="centered">
-            <table class="centered">
-                <tbody>
-
-                    <tr>
-                        <td class="price">Amount Paid</td>
-                        <td class="description" id="amountPaid"></td>
-                    </tr>
-
                     <tr>
                         <td></td>
-                        <td class="description" id="amountPaidLbp">
-                        </td>
+                        <td id="amountPaidLbp"></td>
                     </tr>
                     <tr>
-                        <td class="price">Amount Left</td>
-                        <td class="description" id="amountLeft"></td>
+                        <td>Amount Left</td>
+                        <td id="amountLeft"></td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <p class=" centered">
-            Thank you.
-        </p>
-        <p class="centered" id="phoneNumber"></p>
-        <p class="centered">--------</p>
+
+        <hr class="divider">
+        <p class="footer-thanks">Thank You</p>
+        <p id="phoneNumber"></p>
+        <p class="footer-line">- - - - - - - -</p>
 
     </div>
-    <script src="index.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="index.js"></script>
 </body>
 
 </html>
