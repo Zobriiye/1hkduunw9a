@@ -29,8 +29,23 @@ const main = () => {
 
     // Company
     const cn = $("companyName");
-    cn ? cn.innerHTML = companyName ? `${companyName} — INV# ${transId}` : "" : null;
-    if (!companyName && cn) cn.remove();
+    if (cn) {
+        if (companyName) {
+            cn.innerHTML = companyName;
+        } else {
+            cn.remove();
+        }
+    }
+
+    // Invoice Number - now under company name
+    const invNum = $("invoiceNumber");
+    if (invNum) {
+        if (transId) {
+            invNum.innerHTML = `INV# ${transId}`;
+        } else {
+            invNum.remove();
+        }
+    }
 
     // Customer
     const cu = $("customer");
